@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2c66a8</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="index_bkg">#f4f4f4</color>
+    <color name="item_bkg">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="index_text_color">#acacac</color>
+    <color name="item_pressed_color">#dedede</color>
+    <color name="divider_color">#f4f3f3</color>
+    <!--ac_infoDetail-->
+    <color name="black_light">#545050</color>
+
+    <color name="divider_line">#f4f3f3</color>
+
+    <!--ac_info_detail-->
+    <color name="detail_title_color">#6e6e6e</color>
+    <color name="content_color">#404040</color>
+    <color name="name_color">#262626</color>
+</resources>
