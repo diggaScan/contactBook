@@ -52,6 +52,7 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
         StaffGeneralInfo info = list.get(i);
         myViewholder.tv_ch.setText(info.getCh());
         myViewholder.tv_zw.setText(info.getZw());
+        myViewholder.tv_dh.setText(info.getBmmc());
         final String idcard = info.getIdcard();
         final String img_url = info.getTx();
         final String bmmc = info.getBmmc();
@@ -83,6 +84,7 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
         ImageView iv_tx;
         TextView tv_ch;
         TextView tv_zw;
+        TextView tv_dh;
         LinearLayout ll_container;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -90,6 +92,7 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
             iv_tx = itemView.findViewById(R.id.tx);
             tv_ch = itemView.findViewById(R.id.name);
             tv_zw = itemView.findViewById(R.id.zw);
+            tv_dh = itemView.findViewById(R.id.dh);
             ll_container = itemView.findViewById(R.id.container);
         }
     }
