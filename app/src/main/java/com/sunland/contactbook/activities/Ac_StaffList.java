@@ -10,26 +10,22 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.StaffGeneralInfo;
-import com.sunland.contactbook.bean.StaffListRequestBean;
-import com.sunland.contactbook.bean.StaffListResponseBean;
+import com.sunland.contactbook.V_config;
+import com.sunland.contactbook.bean.i_police_detail_bean.StaffListRequestBean;
+import com.sunland.contactbook.bean.i_police_detail_bean.StaffListResponseBean;
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffGeneralInfo;
 import com.sunland.contactbook.recyclerConfig.Rv_Item_decoration;
 import com.sunland.contactbook.recyclerConfig.StaffList_RvAdapter;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
-import com.sunland.netmodule.network.OnRequestCallback;
 import com.sunland.netmodule.network.OnRequestManagerCancel;
-import com.sunland.netmodule.network.RequestManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 
-public class Ac_StaffList extends Ac_base implements OnRequestCallback
-        , OnRequestManagerCancel {
+public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
 
     @BindView(R.id.recyclerView)
     public RecyclerView rv_staff_list;
@@ -41,15 +37,13 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
     private String bmglm;
     private String bmmc;
     private List<StaffGeneralInfo> dataSet;
-    private RequestManager mRequestManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.ac_staff_list);
-
         setNavVisible(true);
-        mRequestManager = new RequestManager(this, this);
+
         handleIntent();
         if (bmmc == null || bmmc.isEmpty()) {
             setToolbarTitle("警员列表");
@@ -57,8 +51,7 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
             setToolbarTitle(bmmc);
         }
         initRecycler();
-        queryStaffList();
-
+        queryYdjwData(V_config.STAFF_LIST);
     }
 
     private void initRecycler() {
@@ -82,7 +75,6 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
 
     private void handleIntent() {
         Intent intent = getIntent();
-
         if (intent != null) {
             Bundle bundle = intent.getBundleExtra("bundle");
             if (bundle != null) {
@@ -93,22 +85,14 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
         }
     }
 
-    private void queryStaffList() {
-        String reqName = "queryStaffList";
+    public void queryYdjwData(String reqName) {
         mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(reqName), 15000);
-        mRequestManager.postRequest();
+        mRequestManager.postRequestWithoutDialog();
     }
-
 
     private StaffListRequestBean assembleRequestObj(String reqName) {
         StaffListRequestBean staffListRequestBean = new StaffListRequestBean();
-        staffListRequestBean.setYhdm("test");
-        staffListRequestBean.setImei(Global.imei);
-        staffListRequestBean.setImsi(Global.imsi1);
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String pda_time = simpleDateFormat.format(date);
-        staffListRequestBean.setPdaTime(pda_time);
+        assembleBasicRequest(staffListRequestBean);
         staffListRequestBean.setPageNo(100);
         staffListRequestBean.setPageIndex(1);
 
@@ -129,7 +113,7 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
     }
 
     @Override
-    public <T> void onRequestFinish(String reqId, String reqName, T bean) {
+    public void onDataResponse(String reqId, String reqName, ResultBase bean) {
         StaffListResponseBean staffListResponseBean = (StaffListResponseBean) bean;
         if (staffListResponseBean != null) {
             if (staffListResponseBean.getCode().equals("0")) {
@@ -151,13 +135,6 @@ public class Ac_StaffList extends Ac_base implements OnRequestCallback
             Toast.makeText(this, "数据接入错误", Toast.LENGTH_SHORT).show();
             finish();
         }
-
-
-    }
-
-    @Override
-    public <T extends ResultBase> Class<?> getBeanClass(String reqId, String reqName) {
-        return StaffListResponseBean.class;
     }
 
     @Override

@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.DepGeneralInfo;
+import com.sunland.contactbook.bean.i_depList_bean.DepGeneralInfo;
 
 import java.util.List;
 

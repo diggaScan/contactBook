@@ -1,4 +1,6 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_police_detail_bean;
+
+import com.sunland.contactbook.bean.BaseRequestBean;
 
 public class StaffListRequestBean extends BaseRequestBean {
 

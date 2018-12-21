@@ -1,6 +1,8 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_staff_list_bean;
 
-public class StaffDetailRequestBean extends BaseRequestBean{
+import com.sunland.contactbook.bean.BaseRequestBean;
+
+public class StaffDetailRequestBean extends BaseRequestBean {
     private String idcard;
 
     public String getIdcard() {

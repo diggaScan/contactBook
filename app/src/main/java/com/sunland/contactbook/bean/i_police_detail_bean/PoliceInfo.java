@@ -1,4 +1,4 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_police_detail_bean;
 
 public class PoliceInfo {
     private String ch;

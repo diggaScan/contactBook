@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.sunland.contactbook.GlideApp;
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.StaffGeneralInfo;
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffGeneralInfo;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.network.RequestManager;
 
@@ -52,7 +52,13 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
         StaffGeneralInfo info = list.get(i);
         myViewholder.tv_ch.setText(info.getCh());
         myViewholder.tv_zw.setText(info.getZw());
-        myViewholder.tv_dh.setText(info.getBmmc());
+        String jydh = info.getJydh();
+        if (jydh == null || jydh.isEmpty()) {
+            myViewholder.tv_dh_str.setVisibility(View.GONE);
+        } else {
+            myViewholder.tv_dh_str.setVisibility(View.VISIBLE);
+        }
+        myViewholder.tv_dh.setText(info.getJydh());
         final String idcard = info.getIdcard();
         final String img_url = info.getTx();
         final String bmmc = info.getBmmc();
@@ -85,6 +91,7 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
         TextView tv_ch;
         TextView tv_zw;
         TextView tv_dh;
+        TextView tv_dh_str;
         LinearLayout ll_container;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -93,6 +100,7 @@ public class StaffList_RvAdapter extends RecyclerView.Adapter<StaffList_RvAdapte
             tv_ch = itemView.findViewById(R.id.name);
             tv_zw = itemView.findViewById(R.id.zw);
             tv_dh = itemView.findViewById(R.id.dh);
+            tv_dh_str = itemView.findViewById(R.id.dh_str);
             ll_container = itemView.findViewById(R.id.container);
         }
     }

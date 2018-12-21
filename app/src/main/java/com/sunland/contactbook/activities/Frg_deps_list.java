@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.DepGeneralInfo;
+import com.sunland.contactbook.bean.i_depList_bean.DepGeneralInfo;
 import com.sunland.contactbook.recyclerConfig.ContactAdapter;
 import com.sunland.contactbook.recyclerConfig.Rv_Item_decoration;
 

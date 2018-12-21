@@ -15,26 +15,22 @@ import android.widget.Toast;
 
 import com.sunland.contactbook.DataModel;
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.DepGeneralInfo;
-import com.sunland.contactbook.bean.DepsRequestBean;
-import com.sunland.contactbook.bean.DepsResponseBean;
+import com.sunland.contactbook.V_config;
+import com.sunland.contactbook.bean.i_depList_bean.DepGeneralInfo;
+import com.sunland.contactbook.bean.i_depList_bean.DepsRequestBean;
+import com.sunland.contactbook.bean.i_depList_bean.DepsResponseBean;
 import com.sunland.contactbook.customView.CancelableEdit;
 import com.sunland.contactbook.utils.WindowInfoUtils;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
-import com.sunland.netmodule.network.OnRequestCallback;
 import com.sunland.netmodule.network.OnRequestManagerCancel;
-import com.sunland.netmodule.network.RequestManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCallback
-        , Frg_deps_list.OnRvItemClickedListener
+public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedListener
         , OnRequestManagerCancel {
 
 
@@ -52,10 +48,9 @@ public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCal
     private FragmentManager mFragmentManager;
     private boolean showSearchIcon;
     private int backStack_nums = 0;//通讯录跳转的层级
-    //    private List<DepGeneralInfo> rv_dataset;
-//    private ContactAdapter adapter;
+
     private int backPressed_num = 0;//退出应用时计算backpress点击次数
-    private RequestManager mRequestManager;
+    private String bmglm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +58,22 @@ public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCal
         setContentLayout(R.layout.ac_main);
         setToolbarTitle("通讯录");
         setNavVisible(false);
-
         mFragmentManager = getSupportFragmentManager();
         initSearchEdit();
-        initData();
+        bmglm = DataModel.HANGZHOUSJ_ID;//杭州市局作为最高部门级别
+        queryYdjwData(V_config.DEP_LIST);
+    }
+
+    public void queryYdjwData(String reqName) {
+        mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(reqName), 15000);
+        mRequestManager.postRequestWithoutDialog();
     }
 
     @Override
     public void onItemClicked(String bmglm, boolean ywxj, String bmmc) {
         if (ywxj) {
-            String reqName = "queryDepList";
-            mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(reqName, bmglm), 15000);
-            mRequestManager.postRequest();
+            this.bmglm = bmglm;
+            queryYdjwData(V_config.DEP_LIST);
         } else {
             Bundle bundle = new Bundle();
             bundle.putString("bmglm", bmglm);
@@ -149,14 +148,6 @@ public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCal
         });
     }
 
-    public void initData() {
-        String reqName = "queryDepList";
-        mRequestManager = new RequestManager(this, this);
-        mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(reqName, DataModel.HANGZHOUSJ_ID), 15000);
-        mRequestManager.postRequest();
-
-    }
-
 
     @OnClick(R.id.enter_query)
     public void onClick(View view) {
@@ -171,49 +162,22 @@ public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCal
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if (backStack_nums > 1) {
-            mFragmentManager.popBackStack();
-            backStack_nums--;
-        } else {
-            if (backPressed_num != 1) {
-                backPressed_num++;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        backPressed_num--;
-                    }
-                }, 2500);
-                Toast.makeText(this, "再按一次，退出应用", Toast.LENGTH_SHORT).show();
-            } else {
-                finish();
-            }
-        }
-    }
 
-    private DepsRequestBean assembleRequestObj(String reqName, String bmglm) {
+    private DepsRequestBean assembleRequestObj(String reqName) {
         switch (reqName) {
-            case "queryDepList":
+            case V_config.DEP_LIST:
                 DepsRequestBean requestBean = new DepsRequestBean();
-                requestBean.setYhdm("test");
-                requestBean.setImei(Global.imei);
-                requestBean.setImsi(Global.imsi1);
-                Date date = new Date();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String pda_time = simpleDateFormat.format(date);
-                requestBean.setPdaTime(pda_time);
+                assembleBasicRequest(requestBean);
                 requestBean.setBmglm(bmglm);
                 return requestBean;
         }
         return null;
-
     }
 
     @Override
-    public <T> void onRequestFinish(String reqId, String reqName, T bean) {
+    public void onDataResponse(String reqId, String reqName, ResultBase bean) {
         switch (reqName) {
-            case "queryDepList":
+            case V_config.DEP_LIST:
                 DepsResponseBean depsBean = (DepsResponseBean) bean;
                 if (depsBean != null) {
                     if (depsBean.getCode().equals("0")) {
@@ -244,19 +208,32 @@ public class Ac_main extends CheckSelfPermissionActivity implements OnRequestCal
         }
     }
 
-    @Override
-    public <T extends ResultBase> Class<?> getBeanClass(String reqId, String reqName) {
-        switch (reqName) {
-            case "queryDepList":
-                return DepsResponseBean.class;
-        }
-        return null;
-    }
 
     @Override
     public void onHttpRequestCancel() {
         if (backStack_nums == 0) {
             finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (backStack_nums > 1) {
+            mFragmentManager.popBackStack();
+            backStack_nums--;
+        } else {
+            if (backPressed_num != 1) {
+                backPressed_num++;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        backPressed_num--;
+                    }
+                }, 2500);
+                Toast.makeText(this, "再按一次，退出应用", Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
         }
     }
 }

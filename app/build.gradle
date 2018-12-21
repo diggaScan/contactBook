@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            keyAlias 'key0'
+            keyPassword '13567497155abc'
+            storeFile file('F:/asKeyStore/yptKeystore.jks')
+            storePassword '13567497155abc'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.sunland.contactbook"
@@ -12,16 +20,22 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
+
     flavorDimensions "contactBook"
     productFlavors {
         //独立app版
         app {
             manifestPlaceholders = [FLAVOUR_VALUE: "app", CATEGORY_VALUE: "LAUNCHER", PLATEFORM_VALUE: "android"]
             dimension = "contactBook"
+            signingConfig signingConfigs.release
         }
         //演示版本
         demo {

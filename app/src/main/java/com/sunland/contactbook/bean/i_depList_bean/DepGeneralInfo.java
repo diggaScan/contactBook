@@ -1,4 +1,4 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_depList_bean;
 
 public class DepGeneralInfo {
     private String bmmc;

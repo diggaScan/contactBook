@@ -43,6 +43,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="用户名"
+                        android:text="012146"
                         android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true" />
@@ -58,6 +59,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="密码"
+                        android:text="123"
                         android:imeActionId="6"
                         android:imeActionLabel="登录"
                         android:imeOptions="actionUnspecified"

@@ -17,17 +17,33 @@ import android.widget.TextView;
 
 import com.sunland.contactbook.MyApplication;
 import com.sunland.contactbook.R;
+import com.sunland.contactbook.V_config;
+import com.sunland.contactbook.bean.BaseRequestBean;
+import com.sunland.contactbook.bean.i_depList_bean.DepsResponseBean;
+import com.sunland.contactbook.bean.i_login_bean.LoginResBean;
+import com.sunland.contactbook.bean.i_police_detail_bean.StaffListResponseBean;
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffDetailResponseBean;
+import com.sunland.contactbook.utils.DialogUtils;
 import com.sunland.contactbook.utils.WindowInfoUtils;
+import com.sunland.netmodule.def.bean.result.ResultBase;
+import com.sunland.netmodule.network.OnRequestCallback;
+import com.sunland.netmodule.network.RequestManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.ButterKnife;
+import cn.com.cybertech.pdk.OperationLog;
 
-public class Ac_base extends AppCompatActivity {
+public abstract class Ac_base extends AppCompatActivity implements OnRequestCallback {
 
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     private ImageView nav_back;
     private LinearLayout container;
     private TextView title;
     public MyApplication mApplication;
+    public DialogUtils dialogUtils;
+    public RequestManager mRequestManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,8 +67,9 @@ public class Ac_base extends AppCompatActivity {
             });
         }
 
+        dialogUtils = DialogUtils.getInstance();
+        mRequestManager = new RequestManager(this, this);
         initWindow();
-
     }
 
     public void setContentLayout(int layout) {
@@ -62,7 +79,7 @@ public class Ac_base extends AppCompatActivity {
     }
 
     private void initWindow() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP&&setImmersive()) {
             Window window = getWindow();
             window.setStatusBarColor(Color.TRANSPARENT);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -83,8 +100,46 @@ public class Ac_base extends AppCompatActivity {
         }
     }
 
+    public boolean setImmersive(){
+        return true;
+    }
+
     public void setToolbarTitle(String title) {
         this.title.setText(title);
+    }
+
+    public void assembleBasicRequest(BaseRequestBean requestBean) {
+        requestBean.setYhdm(V_config.YHDM);
+        requestBean.setImei(V_config.imei);
+        requestBean.setImsi(V_config.imsi1);
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String pda_time = simpleDateFormat.format(date);
+        requestBean.setPdaTime(pda_time);
+        requestBean.setGpsX(V_config.gpsX);
+        requestBean.setGpsY(V_config.gpsY);
+    }
+
+    public void saveLog(int operateType, int operationResult, String operateCondition) {
+        OperationLog.saveLog(this
+                , getTitle().toString()
+                , "com.sunland.contactbook"
+                , "contactbook"
+                , operateType
+                , OperationLog.OperationResult.CODE_SUCCESS
+                , 1
+                , operateCondition);
+    }
+
+    public String appendString(String... strings) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strings.length; i++) {
+            sb.append(strings[i]);
+            if (i != strings.length - 1) {
+                sb.append("@");
+            }
+        }
+        return sb.toString();
     }
 
     public void hop2Activity(Class<? extends Ac_base> clazz) {
@@ -96,5 +151,28 @@ public class Ac_base extends AppCompatActivity {
         Intent intent = new Intent(this, clazz);
         intent.putExtra("bundle", bundle);
         startActivity(intent);
+    }
+
+    public abstract void onDataResponse(String reqId, String reqName, ResultBase bean);
+
+    @Override
+    public <T> void onRequestFinish(String reqId, String reqName, T bean) {
+        onDataResponse(reqId, reqName, (ResultBase) bean);
+    }
+
+    @Override
+    public <T extends ResultBase> Class<?> getBeanClass(String reqId, String reqName) {
+        switch (reqName) {
+            case V_config.DEP_LIST:
+                return DepsResponseBean.class;
+            case V_config.STAFF_LIST:
+                return StaffListResponseBean.class;
+            case V_config.POLICE_DETAIL:
+                return StaffDetailResponseBean.class;
+            case V_config.USER_LOGIN:
+            case V_config.MM_USER_LOGIN:
+                return LoginResBean.class;
+        }
+        return null;
     }
 }

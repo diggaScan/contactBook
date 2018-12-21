@@ -1,4 +1,4 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_depList_bean;
 
 import com.sunland.netmodule.def.bean.result.ResultBase;
 

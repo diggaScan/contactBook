@@ -21,4 +21,8 @@
     <color name="detail_title_color">#6e6e6e</color>
     <color name="content_color">#404040</color>
     <color name="name_color">#262626</color>
+
+    <!--dialog_utils-->
+    <color name="dialog_backgrounf">#a4313131</color>
+    <color name="progress_gray">#aea6a6</color>
 </resources>

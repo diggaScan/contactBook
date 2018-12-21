@@ -22,23 +22,18 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.sunland.contactbook.GlideApp;
 import com.sunland.contactbook.R;
-import com.sunland.contactbook.bean.PoliceInfo;
-import com.sunland.contactbook.bean.StaffDetailRequestBean;
-import com.sunland.contactbook.bean.StaffDetailResponseBean;
+import com.sunland.contactbook.V_config;
+import com.sunland.contactbook.bean.i_police_detail_bean.PoliceInfo;
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffDetailRequestBean;
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffDetailResponseBean;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
-import com.sunland.netmodule.network.OnRequestCallback;
 import com.sunland.netmodule.network.OnRequestManagerCancel;
-import com.sunland.netmodule.network.RequestManager;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class Ac_infoDetail extends Ac_base implements OnRequestCallback
-        , OnRequestManagerCancel {
+public class Ac_infoDetail extends Ac_base implements OnRequestManagerCancel {
 
     @BindView(R.id.tx)
     public ImageView iv_tx;
@@ -63,7 +58,7 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
     private String tx;
     private String bmmc;
     public PoliceInfo policeInfo;
-    private RequestManager mRequestManager;
+
     private Bitmap bitmap_tx;
 
     private SimpleTarget target = new SimpleTarget<Bitmap>() {
@@ -81,7 +76,7 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
         setNavVisible(true);
         setToolbarTitle("详情");
         handleIntent();
-        queryStaffDetail();
+        queryYdjwData(V_config.POLICE_DETAIL);
         getTx();
     }
 
@@ -97,38 +92,22 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
         }
     }
 
-    private void queryStaffDetail() {
-        mRequestManager = new RequestManager(this, this);
-        String reqName = "queryPoliceDetail";
-        mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(), 15000);
-        mRequestManager.postRequest();
+    public void queryYdjwData(String reqName) {
+        mRequestManager.addRequest(Global.ip, Global.port, Global.postfix, reqName, assembleRequestObj(reqName), 15000);
+        mRequestManager.postRequestWithoutDialog();
     }
 
     private void getTx() {
-
-//        GlideApp.with(this).asBitmap()
-//                .load("http://" + Global.ip + ":" + Global.port + tx)
-//                .placeholder(R.drawable.tx_default)
-//                .error(R.drawable.tx_default)
-//                .into(target);
-
         GlideApp.with(this).asBitmap()
                 .load("http://" + Global.ip + ":" + Global.port + tx)
                 .placeholder(R.drawable.tx_default)
                 .error(R.drawable.tx_default)
                 .into(iv_tx);
-
     }
 
-    private StaffDetailRequestBean assembleRequestObj() {
+    private StaffDetailRequestBean assembleRequestObj(String reqName) {
         StaffDetailRequestBean requestBean = new StaffDetailRequestBean();
-        requestBean.setYhdm("test");
-        requestBean.setImei(Global.imei);
-        requestBean.setImsi(Global.imsi1);
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String pda_time = simpleDateFormat.format(date);
-        requestBean.setPdaTime(pda_time);
+        assembleBasicRequest(requestBean);
         requestBean.setIdcard(idcard);
         return requestBean;
     }
@@ -187,6 +166,9 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
     }
 
     private void dial(String number) {
+        if (number == null || number.isEmpty()) {
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setData(Uri.parse("tel:" + number));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
@@ -196,6 +178,9 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
     }
 
     private void send_msg(String number) {
+        if (number == null || number.isEmpty()) {
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("smsto:" + number));
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -203,9 +188,8 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
         }
     }
 
-
     @Override
-    public <T> void onRequestFinish(String reqId, String reqName, T bean) {
+    public void onDataResponse(String reqId, String reqName, ResultBase bean) {
         StaffDetailResponseBean responseBean = (StaffDetailResponseBean) bean;
         if (responseBean != null) {
             if (responseBean.getCode().equals("0")) {
@@ -226,8 +210,6 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
                                     .append(info.getBmmc()).toString());
                         }
                     }
-
-
                     tv_dzyx.setText(info.getDzyx());
                     tv_jh.setText(info.getJh());
                     tv_xnhm.setText(info.getXnhm());
@@ -243,10 +225,6 @@ public class Ac_infoDetail extends Ac_base implements OnRequestCallback
         }
     }
 
-    @Override
-    public <T extends ResultBase> Class<?> getBeanClass(String reqId, String reqName) {
-        return StaffDetailResponseBean.class;
-    }
 
     @Override
     public void onHttpRequestCancel() {

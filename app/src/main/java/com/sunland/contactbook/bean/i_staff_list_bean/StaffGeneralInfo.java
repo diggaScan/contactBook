@@ -1,4 +1,4 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_staff_list_bean;
 
 public class StaffGeneralInfo {
     private String ch;
@@ -6,6 +6,15 @@ public class StaffGeneralInfo {
     private String zw;
     private String tx;
     private String idcard;
+    private String jydh;
+
+    public String getJydh() {
+        return jydh;
+    }
+
+    public void setJydh(String jydh) {
+        this.jydh = jydh;
+    }
 
     public String getCh() {
         return ch;

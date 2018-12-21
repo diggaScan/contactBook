@@ -1,5 +1,6 @@
-package com.sunland.contactbook.bean;
+package com.sunland.contactbook.bean.i_police_detail_bean;
 
+import com.sunland.contactbook.bean.i_staff_list_bean.StaffGeneralInfo;
 import com.sunland.netmodule.def.bean.result.ResultBase;
 
 import java.util.List;
