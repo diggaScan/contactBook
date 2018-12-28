@@ -115,7 +115,6 @@ public class Ac_login extends Ac_base {
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
     }
 }
 

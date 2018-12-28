@@ -9,15 +9,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <uses-permission android:name="cybertech.pstore.permission.APP" />
-    <!--<uses-permission android:name="cybertech.pstore.permission.COMPONENT" />-->
-    <uses-permission android:name="cybertech.permission.READ_PSTORE" />
+    <!-- 用户信息权限 -->
     <uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />
+    <!-- 链路信息权限 -->
     <uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />
-    <uses-permission android:name="cybertech.permission.READ_PSTORE_LOCATIONINFO" />
-    <uses-permission android:name="cybertech.permission.WRITE_PSTORE_OPERATIONLOG" />
-    <uses-permission android:name="cybertech.permission.READ_PSTORE_LAUNCHERGROUPS" />
+    <!-- 同步时间权限 -->
     <uses-permission android:name="cybertech.permission.READ_PSTORE_SERVER_SYNC_TIME" />
+    <!-- 位置信息权限 -->
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_LOCATIONINFO" />
+    <!-- 基础权限：授权认证等 -->
+    <uses-permission android:name="cybertech.permission.READ_PSTORE" />
+    <!-- 提交操作日志的权限 -->
+    <uses-permission android:name="cybertech.permission.WRITE_PSTORE_OPERATIONLOG" />
+    <!--组件授权-->
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_COMPONENT_AUTHORIZATION" />
 
     <application
         android:name=".MyApplication"

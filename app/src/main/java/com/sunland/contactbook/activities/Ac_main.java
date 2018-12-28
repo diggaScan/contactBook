@@ -26,6 +26,7 @@ import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
 import com.sunland.netmodule.network.OnRequestManagerCancel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,12 +54,17 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
 
     private int backPressed_num = 0;//退出应用时计算backpress点击次数
     private String bmglm;
+    private List<String> title_stack;
+    private int pointer = 0;
+    private boolean isLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.ac_main);
-        setToolbarTitle("通讯录");
+        title_stack = new ArrayList<>();
+        title_stack.add("通讯录");
+        setToolbarTitle(title_stack.get(pointer));
         setNavVisible(false);
         mFragmentManager = getSupportFragmentManager();
         initSearchEdit();
@@ -74,9 +80,13 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
     @Override
     public void onItemClicked(String bmglm, boolean ywxj, String bmmc) {
         if (ywxj) {
+            isLoading = true;
             loading_icon.setVisibility(View.VISIBLE);
             fl_deps_list_container.setVisibility(View.GONE);
             this.bmglm = bmglm;
+            title_stack.add(bmmc);
+            pointer++;
+            setToolbarTitle(bmmc);
             queryYdjwData(V_config.DEP_LIST);
         } else {
             Bundle bundle = new Bundle();
@@ -180,6 +190,7 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
     public void onDataResponse(String reqId, String reqName, ResultBase bean) {
         switch (reqName) {
             case V_config.DEP_LIST:
+                isLoading = false;
                 DepsResponseBean depsBean = (DepsResponseBean) bean;
                 if (depsBean != null) {
                     if (depsBean.getCode().equals("0")) {
@@ -228,6 +239,13 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
 
     @Override
     public void onBackPressed() {
+
+        if (pointer > 0&&!isLoading) {
+            title_stack.remove(pointer);
+            pointer--;
+            setToolbarTitle(title_stack.get(pointer));
+        }
+
         if (backStack_nums > 1) {
             mFragmentManager.popBackStack();
             backStack_nums--;

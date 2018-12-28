@@ -121,14 +121,19 @@ public abstract class Ac_base extends AppCompatActivity implements OnRequestCall
     }
 
     public void saveLog(int operateType, int operationResult, String operateCondition) {
-        OperationLog.saveLog(this
-                , getTitle().toString()
-                , "com.sunland.contactbook"
-                , "contactbook"
-                , operateType
-                , OperationLog.OperationResult.CODE_SUCCESS
-                , 1
-                , operateCondition);
+        try {
+            OperationLog.logging(this
+                    , "51A6B10D512296FF5E73E42FBD82C1E7"
+                    , getApplication().getPackageName()
+                    , operateType
+                    , operationResult
+                    , 1
+                    , operateCondition);
+        } catch (Exception e) {
+            //未适配Fileprovider
+            e.printStackTrace();
+        }
+
     }
 
     public String appendString(String... strings) {
