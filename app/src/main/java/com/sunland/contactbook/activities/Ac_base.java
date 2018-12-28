@@ -79,7 +79,7 @@ public abstract class Ac_base extends AppCompatActivity implements OnRequestCall
     }
 
     private void initWindow() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP&&setImmersive()) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && setImmersive()) {
             Window window = getWindow();
             window.setStatusBarColor(Color.TRANSPARENT);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -100,7 +100,7 @@ public abstract class Ac_base extends AppCompatActivity implements OnRequestCall
         }
     }
 
-    public boolean setImmersive(){
+    public boolean setImmersive() {
         return true;
     }
 

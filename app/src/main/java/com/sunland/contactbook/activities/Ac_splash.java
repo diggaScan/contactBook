@@ -11,9 +11,6 @@ import com.sunland.contactbook.bean.i_mm_login_bean.LoginMMRequestBean;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import cn.com.cybertech.models.User;
 import cn.com.cybertech.pdk.OperationLog;
 
@@ -57,19 +54,11 @@ public class Ac_splash extends CheckSelfPermissionActivity {
     public BaseRequestBean assembleRequestObj() {
         // TODO: 2018/12/21/021 修改参数
         LoginMMRequestBean loginBean = new LoginMMRequestBean();
-        loginBean.setYhdm(V_config.YHDM);
-        loginBean.setImei(V_config.imei);
-        loginBean.setImsi(V_config.imsi1);
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String pda_time = simpleDateFormat.format(date);
-        loginBean.setPdaTime(pda_time);
-        loginBean.setGpsX("gpsx");
-        loginBean.setGpsY("gpsy");
-        loginBean.setDlmk("1");
-        loginBean.setSjpp("1");
-        loginBean.setSjxx("1");
-        loginBean.setZzxt("1");
+        assembleBasicRequest(loginBean);
+        loginBean.setDlmk(V_config.APP_NAME);
+        loginBean.setSjpp(V_config.BRAND);
+        loginBean.setSjxx(V_config.MODEL);
+        loginBean.setZzxt(V_config.OS);
         return loginBean;
     }
 
@@ -80,7 +69,6 @@ public class Ac_splash extends CheckSelfPermissionActivity {
             Toast.makeText(this, "服务异常", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (!loginResBean.getCode().equals("0")) {
             saveLog(0, OperationLog.OperationResult.CODE_SUCCESS, appendString(V_config.YHDM, V_config.BRAND, V_config.MODEL));
             Bundle bundle = new Bundle();

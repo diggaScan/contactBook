@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.sunland.contactbook.DataModel;
 import com.sunland.contactbook.R;
 import com.sunland.contactbook.V_config;
@@ -33,7 +34,6 @@ import butterknife.OnClick;
 public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedListener
         , OnRequestManagerCancel {
 
-
     @BindView(R.id.content)
     public View container;
     @BindView(R.id.app_search)
@@ -44,6 +44,8 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
     public TextView tv_query;
     @BindView(R.id.deps_list_container)
     public FrameLayout fl_deps_list_container;
+    @BindView(R.id.loading_icon)
+    public SpinKitView loading_icon;
 
     private FragmentManager mFragmentManager;
     private boolean showSearchIcon;
@@ -72,6 +74,8 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
     @Override
     public void onItemClicked(String bmglm, boolean ywxj, String bmmc) {
         if (ywxj) {
+            loading_icon.setVisibility(View.VISIBLE);
+            fl_deps_list_container.setVisibility(View.GONE);
             this.bmglm = bmglm;
             queryYdjwData(V_config.DEP_LIST);
         } else {
@@ -106,7 +110,6 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
                     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator animation) {
-
                             float value = (float) animation.getAnimatedValue();
                             showSearchIcon = true;
                             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ce_search_width - (int) (tv_query.getWidth() * value), ce_search.getHeight());
@@ -162,7 +165,6 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
         }
     }
 
-
     private DepsRequestBean assembleRequestObj(String reqName) {
         switch (reqName) {
             case V_config.DEP_LIST:
@@ -193,6 +195,14 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
                             transaction.addToBackStack("tag");
                             transaction.commit();
                             backStack_nums++;
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fl_deps_list_container.setVisibility(View.VISIBLE);
+                                    loading_icon.setVisibility(View.GONE);
+                                }
+                            }, 300);
+
                         }
                     } else {
                         Toast.makeText(this, "服务异常，无法获取数据", Toast.LENGTH_SHORT).show();
@@ -203,11 +213,11 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
                     Toast.makeText(this, "数据接入错误", Toast.LENGTH_SHORT).show();
                     finish();
                 }
+
                 break;
 
         }
     }
-
 
     @Override
     public void onHttpRequestCancel() {

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -31,6 +32,8 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
     public RecyclerView rv_staff_list;
     @BindView(R.id.noData_container)
     public RelativeLayout rl_no_data;
+    @BindView(R.id.loading_icon)
+    public FrameLayout loading_icon;
 
     private StaffList_RvAdapter adapter;
     private String str;//检索关键字
@@ -118,10 +121,12 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
         if (staffListResponseBean != null) {
             if (staffListResponseBean.getCode().equals("0")) {
                 if (staffListResponseBean != null) {
+                    loading_icon.setVisibility(View.GONE);
                     List<StaffGeneralInfo> list = staffListResponseBean.getStaffGeneralInfo();
                     if (list == null || list.isEmpty()) {
                         rl_no_data.setVisibility(View.VISIBLE);
                     } else {
+
                         dataSet.clear();
                         dataSet.addAll(staffListResponseBean.getStaffGeneralInfo());
                         adapter.notifyDataSetChanged();
