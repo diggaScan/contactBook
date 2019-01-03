@@ -47,7 +47,7 @@
             <intent-filter>
                 <action android:name="${PLATEFORM_VALUE}.intent.action.MAIN" />
                 <category android:name="${PLATEFORM_VALUE}.intent.category.${CATEGORY_VALUE}" />
-            </intent-filter>
+            </intent-filter>-
         </activity>
         <activity
             android:name=".activities.Ac_main"

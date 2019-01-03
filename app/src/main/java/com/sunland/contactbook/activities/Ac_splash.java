@@ -71,9 +71,7 @@ public class Ac_splash extends CheckSelfPermissionActivity {
         }
         if (!loginResBean.getCode().equals("0")) {
             saveLog(0, OperationLog.OperationResult.CODE_SUCCESS, appendString(V_config.YHDM, V_config.BRAND, V_config.MODEL));
-            Bundle bundle = new Bundle();
-            bundle.putString("bmcode", loginResBean.getDljyxx().getBmcode());
-            hop2Activity(Ac_main.class, bundle);
+            hop2Activity(Ac_main.class);
         } else {
             saveLog(0, OperationLog.OperationResult.CODE_FAILURE,
                     appendString(V_config.YHDM, V_config.BRAND, V_config.MODEL));

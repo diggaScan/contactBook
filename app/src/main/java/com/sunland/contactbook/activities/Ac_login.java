@@ -11,6 +11,7 @@ import com.sunland.contactbook.V_config;
 import com.sunland.contactbook.bean.BaseRequestBean;
 import com.sunland.contactbook.bean.i_login_bean.LoginRequestBean;
 import com.sunland.contactbook.bean.i_login_bean.LoginResBean;
+import com.sunland.contactbook.bean.i_mm_login_bean.LoginMMRequestBean;
 import com.sunland.contactbook.utils.DialogUtils;
 import com.sunland.netmodule.Global;
 import com.sunland.netmodule.def.bean.result.ResultBase;
@@ -115,6 +116,7 @@ public class Ac_login extends Ac_base {
     @Override
     protected void onStop() {
         super.onStop();
+        finish();
     }
 }
 
