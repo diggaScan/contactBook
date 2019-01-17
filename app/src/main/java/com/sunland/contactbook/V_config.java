@@ -26,6 +26,7 @@ public final class V_config {
     public static String gpsY = "";//纬度
     public static String gpsinfo = gpsX + gpsY;
     public static String APP_NAME = "杭州警务通讯录";
+    public static String DLMK = "2";
     //用户代码
     public static String YHDM;
 

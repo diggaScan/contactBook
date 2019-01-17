@@ -15,6 +15,7 @@ import com.sunland.contactbook.V_config;
 import com.sunland.contactbook.bean.i_police_detail_bean.StaffListRequestBean;
 import com.sunland.contactbook.bean.i_police_detail_bean.StaffListResponseBean;
 import com.sunland.contactbook.bean.i_staff_list_bean.StaffGeneralInfo;
+import com.sunland.contactbook.customView.DragToRefreshView.DragToRefreshView;
 import com.sunland.contactbook.recyclerConfig.Rv_Item_decoration;
 import com.sunland.contactbook.recyclerConfig.StaffList_RvAdapter;
 import com.sunland.netmodule.Global;
@@ -34,12 +35,21 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
     public RelativeLayout rl_no_data;
     @BindView(R.id.loading_icon)
     public FrameLayout loading_icon;
+    @BindView(R.id.refresh)
+    public DragToRefreshView d2r_refresh;
 
     private StaffList_RvAdapter adapter;
     private String str;//检索关键字
     private String bmglm;
     private String bmmc;
+    private String rysl;
     private List<StaffGeneralInfo> dataSet;
+
+    private int cur_page = 1;
+    private int items_per_page = 30;
+
+    private boolean noMorePeople = false;
+    private boolean firstLoad = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +84,37 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
         rv_staff_list.setLayoutManager(manager);
         rv_staff_list.setAdapter(adapter);
         rv_staff_list.addItemDecoration(new Rv_Item_decoration(this));
+
+        d2r_refresh.unableHeaderRefresh(false);
+        d2r_refresh.unableFooterRefresh(false);
+
+//        if (rysl == null || Integer.valueOf(rysl) <= items_per_page) {
+//            d2r_refresh.unableFooterRefresh(false);
+//        } else {
+//            d2r_refresh.unableFooterRefresh(true);
+//        }
+
+        d2r_refresh.setUpdateListener(new DragToRefreshView.OnUpdateListener() {
+            @Override
+            public void onRefreshing(DragToRefreshView view) {
+                cur_page = dataSet.size() / items_per_page;//重置当前页数
+                if (view.isFooterRefreshing()) {
+                    cur_page++;
+                    queryYdjwData(V_config.STAFF_LIST);
+                }
+            }
+
+            @Override
+            public void onFinished(DragToRefreshView view) {
+                if (view.getState() == DragToRefreshView.State.footer_release_to_load) {
+                    int scroll_position = dataSet.size() - items_per_page;
+                    if (scroll_position > 0) {
+                        rv_staff_list.scrollToPosition(dataSet.size());
+                    }
+                }
+            }
+        });
+        d2r_refresh.addMainContent(rv_staff_list);
     }
 
     private void handleIntent() {
@@ -84,6 +125,7 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
                 str = bundle.getString("str");
                 bmglm = bundle.getString("bmglm");
                 bmmc = bundle.getString("bmmc");
+                rysl = bundle.getString("rysl");
             }
         }
     }
@@ -96,8 +138,8 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
     private StaffListRequestBean assembleRequestObj(String reqName) {
         StaffListRequestBean staffListRequestBean = new StaffListRequestBean();
         assembleBasicRequest(staffListRequestBean);
-        staffListRequestBean.setPageNo(100);
-        staffListRequestBean.setPageIndex(1);
+        staffListRequestBean.setPageNo(items_per_page);
+        staffListRequestBean.setPageIndex(cur_page);
 
         if (bmglm != null) {
             staffListRequestBean.setBmglm(bmglm);
@@ -117,26 +159,39 @@ public class Ac_StaffList extends Ac_base implements OnRequestManagerCancel {
 
     @Override
     public void onDataResponse(String reqId, String reqName, ResultBase bean) {
+        d2r_refresh.dismiss();
         StaffListResponseBean staffListResponseBean = (StaffListResponseBean) bean;
         if (staffListResponseBean != null) {
             if (staffListResponseBean.getCode().equals("0")) {
                 if (staffListResponseBean != null) {
                     loading_icon.setVisibility(View.GONE);
                     List<StaffGeneralInfo> list = staffListResponseBean.getStaffGeneralInfo();
-                    if (list == null || list.isEmpty()) {
+                    if (list == null || list.isEmpty() && dataSet.isEmpty()) {
                         rl_no_data.setVisibility(View.VISIBLE);
+                    } else if (list == null || list.isEmpty() && !dataSet.isEmpty()) {
+                        d2r_refresh.unableFooterRefresh(false);
+                        Toast.makeText(this, "无更多警员信息", Toast.LENGTH_SHORT).show();
                     } else {
-
-                        dataSet.clear();
-                        dataSet.addAll(staffListResponseBean.getStaffGeneralInfo());
-                        adapter.notifyDataSetChanged();
+                        if (list.size() < items_per_page) {
+                            d2r_refresh.unableFooterRefresh(false);
+                            if (!firstLoad) {
+                                Toast.makeText(this, "已显示全部警员信息", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            d2r_refresh.unableFooterRefresh(true);
+                        }
+                        firstLoad = false;
+                        dataSet.addAll(list);
+                        adapter.notifyItemRangeChanged(dataSet.size(), list.size());
                     }
                 }
             } else {
+
                 Toast.makeText(this, "服务异常，无法获取数据", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else {
+
             Toast.makeText(this, "数据接入错误", Toast.LENGTH_SHORT).show();
             finish();
         }

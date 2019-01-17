@@ -45,8 +45,8 @@ public class Frg_deps_list extends Fragment {
 //        contactAdapter.setHasStableIds(true);
         contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
             @Override
-            public void onItemClicked(String bmglm, boolean ywxj, String bmmc, int position) {
-                ((OnRvItemClickedListener) context).onItemClicked(bmglm, ywxj, bmmc);
+            public void onItemClicked(String bmglm, boolean ywxj, String bmmc,String rysl, int position) {
+                ((OnRvItemClickedListener) context).onItemClicked(bmglm, ywxj, bmmc,rysl);
             }
         });
         LinearLayoutManager manager = new LinearLayoutManager(context);
@@ -60,6 +60,6 @@ public class Frg_deps_list extends Fragment {
     }
 
     interface OnRvItemClickedListener {
-        void onItemClicked(String bmglm, boolean ywxj, String bmmc);
+        void onItemClicked(String bmglm, boolean ywxj, String bmmc,String rysl);
     }
 }

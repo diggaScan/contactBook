@@ -78,7 +78,7 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
     }
 
     @Override
-    public void onItemClicked(String bmglm, boolean ywxj, String bmmc) {
+    public void onItemClicked(String bmglm, boolean ywxj, String bmmc,String rysl) {
         if (ywxj) {
             isLoading = true;
             loading_icon.setVisibility(View.VISIBLE);
@@ -92,6 +92,7 @@ public class Ac_main extends Ac_base implements Frg_deps_list.OnRvItemClickedLis
             Bundle bundle = new Bundle();
             bundle.putString("bmglm", bmglm);
             bundle.putString("bmmc", bmmc);
+            bundle.putString("rysl",rysl);
             hop2Activity(Ac_StaffList.class, bundle);
         }
     }

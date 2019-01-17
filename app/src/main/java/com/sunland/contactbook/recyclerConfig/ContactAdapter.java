@@ -55,7 +55,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewho
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClicked(info.getBmglm(), info.isYwxj(), info.getBmmc(), i);
+                    onItemClickListener.onItemClicked(info.getBmglm(), info.isYwxj(), info.getBmmc(),info.getXjsl(), i);
                 }
             }
         });
@@ -85,6 +85,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewho
     }
 
     public interface OnItemClickListener {
-        void onItemClicked(String bmglm, boolean ywxj, String bmmmc, int position);
+        void onItemClicked(String bmglm, boolean ywxj, String bmmmc,String rysl, int position);
     }
 }

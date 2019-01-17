@@ -55,7 +55,7 @@ public class Ac_splash extends CheckSelfPermissionActivity {
         // TODO: 2018/12/21/021 修改参数
         LoginMMRequestBean loginBean = new LoginMMRequestBean();
         assembleBasicRequest(loginBean);
-        loginBean.setDlmk(V_config.APP_NAME);
+        loginBean.setDlmk(V_config.DLMK);
         loginBean.setSjpp(V_config.BRAND);
         loginBean.setSjxx(V_config.MODEL);
         loginBean.setZzxt(V_config.OS);
