@@ -69,7 +69,7 @@ public class Ac_splash extends CheckSelfPermissionActivity {
             Toast.makeText(this, "服务异常", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!loginResBean.getCode().equals("0")) {
+        if (loginResBean.getCode().equals("0")) {
             saveLog(0, OperationLog.OperationResult.CODE_SUCCESS, appendString(V_config.YHDM, V_config.BRAND, V_config.MODEL));
             hop2Activity(Ac_main.class);
         } else {

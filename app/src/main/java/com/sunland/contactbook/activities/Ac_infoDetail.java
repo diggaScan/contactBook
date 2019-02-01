@@ -87,7 +87,7 @@ public class Ac_infoDetail extends Ac_base implements OnRequestManagerCancel {
             if (bundle != null) {
                 idcard = bundle.getString("idcard");
                 tx = bundle.getString("tx");
-                bmmc = bundle.getString("bmmc");
+                bmmc = bundle.getString("bmmc", "");
             }
         }
     }
@@ -200,7 +200,7 @@ public class Ac_infoDetail extends Ac_base implements OnRequestManagerCancel {
                     tv_bghm.setText(info.getBghm());
                     tv_bgsh.setText(info.getBgsh());
 
-                    if (info.getBmmc() == null) {
+                    if (info.getBmmc() == null || info.getBmmc().isEmpty()) {
                         tv_bmmc.setText(bmmc);
                     } else {
                         if (info.getBmmc().contains(bmmc)) {
